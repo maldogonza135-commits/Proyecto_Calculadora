@@ -41,3 +41,28 @@ app-example
 # generated native folders
 /ios
 /android
+
+.expo-shared/     
+*.expo.ts         
+*.expo.js
+
+# iOS
+ios/Pods/         
+ios/build/        
+*.xcworkspace     
+
+# Android
+android/.gradle   
+android/local.properties  
+.gradle/          
+
+.secrets          
+.env
+
+.pnp.js           
+.yarn/install-state.gz
+.history          
+
+coverage/         
+.nyc_output
+*.lcov
