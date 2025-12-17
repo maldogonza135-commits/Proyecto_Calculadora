@@ -1,6 +1,7 @@
 import type { BottomTabNavigationEventMap } from "@react-navigation/bottom-tabs";
 import type { NavigationHelpers } from "@react-navigation/native";
-import { Tabs, usePathname, useRouter } from "expo-router";
+
+import { Slot, Tabs, usePathname, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Appbar } from "react-native-paper";
@@ -42,7 +43,8 @@ export default function CalculadoraNavTabLayout() {
       tabActual: pathname.split('/').pop()
     },
   });
-
+  //Para que no se ejecute tabs en settings e historial
+  const hideTabs = pathname?.includes('/settings') || pathname?.includes('/historial');
   return (
     <>
       {/* ✅ APP BAR DIRECTAMENTE - SIN COMPONENTE PERSONALIZADO */}
@@ -70,13 +72,16 @@ export default function CalculadoraNavTabLayout() {
       </Appbar.Header>
       
       {/* Tabs: contenedor de las dos pantallas de calculadora */}
-      <Tabs
-        tabBar={(props) => <CustomTabBar {...props} />}
-        screenOptions={{
-          headerShown: false,
-          tabBarPosition: "top",
-        }}
-      >
+      {hideTabs ? (
+          <Slot />
+        ) : (
+        <Tabs
+          tabBar={(props) => <CustomTabBar {...props} />}
+          screenOptions={{
+            headerShown: false,
+            tabBarPosition: "top",
+          }}
+        >
         {/* Primera pestaña: Calculadora Básica */}
         <Tabs.Screen
           name="CalculadoraBasica"
@@ -92,8 +97,9 @@ export default function CalculadoraNavTabLayout() {
             title: "Cientifica",
           }}
         />
-      </Tabs>
-    </>
+        </Tabs>
+      )}
+      </>
   );
 }
 
