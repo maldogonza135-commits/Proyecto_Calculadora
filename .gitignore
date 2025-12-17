@@ -66,3 +66,7 @@ android/local.properties
 coverage/         
 .nyc_output
 *.lcov
+
+# Firebase config
+config/firebase.js
+config/firebase.js.bak
