@@ -1,6 +1,7 @@
 import type { BottomTabNavigationEventMap } from "@react-navigation/bottom-tabs";
 import type { NavigationHelpers } from "@react-navigation/native";
-import { Tabs, usePathname, useRouter } from "expo-router";
+
+import { Slot, Tabs, usePathname, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Appbar } from "react-native-paper";
@@ -34,15 +35,33 @@ export default function CalculadoraNavTabLayout() {
   // Verificar si estamos en pantalla hija (historial/settings)
   const isChildScreen = pathname?.includes('/historial') || pathname?.includes('/settings');
 
-  const openHistorial = () => router.push({
-    pathname: '/(tabPrincipal)/(tabCalculadora)/historial',
-    params: {
-      modoRetorno: 'conDato',
-      pantallaOrigen: 'calculadora',
-      tabActual: pathname.split('/').pop()
-    },
-  });
+  // CORREGIDO: Funciones separadas y con logs
+  const openHistorial = () => {
+    console.log('🎯 Navegando a HISTORIAL');
+    router.push({
+      pathname: '/(tabPrincipal)/(tabCalculadora)/historial',
+      params: {
+        modoRetorno: 'conDato',
+        pantallaOrigen: 'calculadora',
+        tabActual: pathname.split('/').pop()
+      },
+    });
+  };
 
+  const openSettings = () => {
+    console.log('⚙️ Navegando a SETTINGS');
+    router.push({
+      pathname: '/(tabPrincipal)/(tabCalculadora)/settings',
+      params: {
+        pantallaOrigen: 'calculadora',
+        tabActual: pathname.split('/').pop()
+      },
+    });
+  };
+
+  //Para que no se ejecute tabs en settings e historial
+  const hideTabs = pathname?.includes('/settings') || pathname?.includes('/historial');
+  
   return (
     <>
       {/* ✅ APP BAR DIRECTAMENTE - SIN COMPONENTE PERSONALIZADO */}
@@ -59,24 +78,27 @@ export default function CalculadoraNavTabLayout() {
           <>
             <Appbar.Action 
               icon="history" 
-              onPress={openHistorial} 
+              onPress={openHistorial}  // ✅ Usa la función corregida
             />
             <Appbar.Action 
               icon="cog" 
-              onPress={() => router.push('/(tabPrincipal)/(tabCalculadora)/settings')} 
+              onPress={openSettings}  // ✅ Usa la nueva función
             />
           </>
         ) : null}
       </Appbar.Header>
       
       {/* Tabs: contenedor de las dos pantallas de calculadora */}
-      <Tabs
-        tabBar={(props) => <CustomTabBar {...props} />}
-        screenOptions={{
-          headerShown: false,
-          tabBarPosition: "top",
-        }}
-      >
+      {hideTabs ? (
+          <Slot />
+        ) : (
+        <Tabs
+          tabBar={(props) => <CustomTabBar {...props} />}
+          screenOptions={{
+            headerShown: false,
+            tabBarPosition: "top",
+          }}
+        >
         {/* Primera pestaña: Calculadora Básica */}
         <Tabs.Screen
           name="CalculadoraBasica"
@@ -92,8 +114,9 @@ export default function CalculadoraNavTabLayout() {
             title: "Cientifica",
           }}
         />
-      </Tabs>
-    </>
+        </Tabs>
+      )}
+      </>
   );
 }
 

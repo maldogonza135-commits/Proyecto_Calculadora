@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from "firebase/auth";
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache } from "firebase/firestore"; // Importa persistentLocalCache
+
 
 const firebaseConfig = {
     apiKey: 'AIzaSyCj_Ejemplo1234567890abc',
@@ -14,6 +15,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-export { app, auth, db };
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({}), // ✅ Nuevo método oficial
+});
+
+export { app, auth };
